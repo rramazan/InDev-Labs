@@ -15,6 +15,7 @@ export default new Vuex.Store({
     },
     mutations: {
         fillList(state, list) {
+            state.list = [];
             for(let item in list) {
                 state.list.push({
                         Pair: item.replace('Z', '-').replace('X', ''),
@@ -28,18 +29,18 @@ export default new Vuex.Store({
         }
     },
     actions: {
-        async init(context) {
+        async init({commit, dispatch}) {
             try {
                 let res = await http.get();
                 if( res.data.error.length ) {
-                    context.commit('throwErrorMessage', res.data.error[0]);
+                    commit('throwErrorMessage', res.data.error[0]);
                 } else {
-                    context.commit('fillList', res.data.result);
+                    commit('fillList', res.data.result);
                 }
             } catch (e) {
-                context.commit('throwErrorMessage', e);
+                commit('throwErrorMessage', e);
             }
-
+            setTimeout(() => dispatch('init'), 15000);
         }
     },
 })
